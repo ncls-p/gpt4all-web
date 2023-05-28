@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  gpt4-all-web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8028:3000"
+    restart: unless-stopped
