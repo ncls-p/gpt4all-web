@@ -3,6 +3,7 @@ import { Button, Input, List, Typography, Popconfirm } from 'antd';
 import { DeleteOutlined, DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
+import { ScaleLoader } from 'react-spinners';
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -19,7 +20,7 @@ const Chatbox: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [messageIdToRemove, setMessageIdToRemove] = useState<number | null>(null);
   const [isBotTyping, setIsBotTyping] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true); // Set default theme to dark
 
   const generateMessageId = () => {
     return Date.now(); // Simple way to generate unique message IDs, can be replaced with UUID or other solutions
@@ -170,6 +171,8 @@ const Chatbox: React.FC = () => {
     padding: '10px',
     borderRadius: '5px',
     alignSelf: 'flex-end',
+    display: 'flex',
+    alignItems: 'center',
   };
 
   const timestampStyle: React.CSSProperties = {
@@ -246,7 +249,7 @@ const Chatbox: React.FC = () => {
         <List.Item style={chatContainerStyle}>
           <div style={typingIndicatorStyle}>
             <Text strong>Bot: </Text>
-            <span>Typing...</span>
+            <ScaleLoader color={isDarkMode ? '#000' : '#fff'} loading={true} height={10} width={2} radius={2} />
           </div>
         </List.Item>
       )}
