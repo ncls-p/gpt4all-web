@@ -74,7 +74,6 @@ const Chatbox: React.FC = () => {
     }
   };
 
-
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(event.target.value);
   };
