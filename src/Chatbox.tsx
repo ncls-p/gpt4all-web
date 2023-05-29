@@ -66,17 +66,25 @@ const Chatbox: React.FC = () => {
       const updatedMessages = [...messages, newMessage];
       setMessages(updatedMessages);
       setInputValue('');
+
+      const inputElement = document.querySelector('input[type="text"]') as HTMLInputElement;
+      if (inputElement) {
+        inputElement.blur(); // Close the keyboard by removing focus from the input element
+      }
     }
   };
+
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(event.target.value);
   };
 
-  const handleInputKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleInputKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       handleMessageSubmit();
+      const inputElement = event.target as HTMLTextAreaElement;
+      inputElement.blur(); // Close the keyboard by removing focus from the input element
     }
   };
 
@@ -147,6 +155,7 @@ const Chatbox: React.FC = () => {
     minHeight: '100vh',
     padding: '20px',
     fontFamily: 'sans-serif',
+    touchAction: 'manipulation', // Disable zooming on mobile devices
   };
 
   const chatContainerStyle: React.CSSProperties = {
@@ -259,7 +268,7 @@ const Chatbox: React.FC = () => {
           autoSize={{ minRows: 1, maxRows: 6 }}
           value={inputValue}
           onChange={handleInputChange}
-          onKeyPress={handleInputKeyPress}
+          onKeyDown={handleInputKeyDown} // Listen to the keydown event
           style={{ resize: 'none' }}
         />
         <Button type="primary" onClick={handleMessageSubmit}>
