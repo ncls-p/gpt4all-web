@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Button, Input, List, Typography, Popconfirm, Row, Col } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Button, Input, List, Typography, Popconfirm } from 'antd';
 import { DeleteOutlined, DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
@@ -21,8 +21,6 @@ const Chatbox: React.FC = () => {
   const [messageIdToRemove, setMessageIdToRemove] = useState<number | null>(null);
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true); // Set default theme to dark
-
-  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const generateMessageId = () => {
     return Date.now(); // Simple way to generate unique message IDs, can be replaced with UUID or other solutions
@@ -103,7 +101,11 @@ const Chatbox: React.FC = () => {
     const messageDate = new Date(timestamp);
     const formattedTimestamp = messageDate.toLocaleString(); // Format the timestamp as desired
 
-    return <div style={timestampStyle}>{formattedTimestamp}</div>;
+    return (
+      <div style={timestampStyle}>
+        {formattedTimestamp}
+      </div>
+    );
   };
 
   const handleDarkModeToggle = () => {
@@ -138,11 +140,11 @@ const Chatbox: React.FC = () => {
   };
 
   const containerStyle: React.CSSProperties = {
-    height: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
+    maxWidth: '500px',
+    margin: '0 auto',
     backgroundColor: isDarkMode ? '#1f2937' : '#edf2f7',
     color: isDarkMode ? 'white' : 'black',
+    minHeight: '100vh',
     padding: '20px',
     fontFamily: 'sans-serif',
   };
@@ -152,17 +154,15 @@ const Chatbox: React.FC = () => {
     display: 'flex',
     justifyContent: 'flex-start',
     position: 'relative',
-    overflowY: 'auto',
-    flex: 1,
   };
 
   const chatBubbleStyle: React.CSSProperties = {
     backgroundColor: isDarkMode ? '#4299e1' : '#a0c3ff',
     color: isDarkMode ? 'white' : 'black',
+    padding: '10px',
     borderRadius: '5px',
     position: 'relative',
     alignSelf: 'flex-end',
-    wordWrap: 'break-word',
   };
 
   const typingIndicatorStyle: React.CSSProperties = {
@@ -177,8 +177,10 @@ const Chatbox: React.FC = () => {
 
   const timestampStyle: React.CSSProperties = {
     position: 'absolute',
-    top: '0',
+    top: '-15px',
+    left: '0',
     right: '0',
+    textAlign: 'center',
     fontSize: '12px',
     color: isDarkMode ? 'white' : 'black',
   };
@@ -210,49 +212,47 @@ const Chatbox: React.FC = () => {
 
   return (
     <div style={containerStyle}>
-      <div ref={chatContainerRef} style={chatContainerStyle}>
-        <List
-          dataSource={messages}
-          renderItem={(message) => (
-            <List.Item
-              key={message.id}
-              style={message.role === 'user' ? { ...chatContainerStyle, justifyContent: 'flex-end' } : chatContainerStyle}
-              onMouseEnter={() => setMessageIdToRemove(message.id)}
-              onMouseLeave={() => setMessageIdToRemove(null)}
-            >
-              <div
-                style={message.role === 'user' ? { ...chatBubbleStyle, backgroundColor: isDarkMode ? '#667EEA' : '#93C5FD' } : chatBubbleStyle}
-              >
-                <Text strong>{message.role === 'user' ? 'User: ' : 'Bot: '}</Text>
-                <div style={timestampStyle}>{renderMessageTimestamp(message.timestamp)}</div>
-                {renderMessageContent(message.content)}
-                {messageIdToRemove === message.id && (
-                  <Popconfirm
-                    title="Are you sure you want to remove this message?"
-                    onConfirm={() => handleRemoveMessage(message.id)}
-                    okText="Yes"
-                    cancelText="No"
-                  >
-                    <Button
-                      type="text"
-                      icon={<DeleteOutlined />}
-                      style={{ position: 'absolute', top: '5px', right: '5px', color: 'white' }}
-                    />
-                  </Popconfirm>
-                )}
+      <List
+        dataSource={messages}
+        renderItem={(message) => (
+          <List.Item
+            key={message.id}
+            style={message.role === 'user' ? { ...chatContainerStyle, justifyContent: 'flex-end' } : chatContainerStyle}
+            onMouseEnter={() => setMessageIdToRemove(message.id)}
+            onMouseLeave={() => setMessageIdToRemove(null)}
+          >
+            <div style={message.role === 'user' ? { ...chatBubbleStyle, backgroundColor: isDarkMode ? '#667EEA' : '#93C5FD' } : chatBubbleStyle}>
+              <Text strong>{message.role === 'user' ? 'User: ' : 'Bot: '}</Text>
+              <div style={timestampStyle}>
+                {renderMessageTimestamp(message.timestamp)}
               </div>
-            </List.Item>
-          )}
-        />
-        {isBotTyping && (
-          <List.Item style={chatContainerStyle}>
-            <div style={typingIndicatorStyle}>
-              <Text strong>Bot: </Text>
-              <ScaleLoader color={isDarkMode ? '#000' : '#fff'} loading={true} height={10} width={2} radius={2} />
+              {renderMessageContent(message.content)}
+              {messageIdToRemove === message.id && (
+                <Popconfirm
+                  title="Are you sure you want to remove this message?"
+                  onConfirm={() => handleRemoveMessage(message.id)}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button
+                    type="text"
+                    icon={<DeleteOutlined />}
+                    style={{ position: 'absolute', top: '5px', right: '5px', color: 'white' }}
+                  />
+                </Popconfirm>
+              )}
             </div>
           </List.Item>
         )}
-      </div>
+      />
+      {isBotTyping && (
+        <List.Item style={chatContainerStyle}>
+          <div style={typingIndicatorStyle}>
+            <Text strong>Bot: </Text>
+            <ScaleLoader color={isDarkMode ? '#000' : '#fff'} loading={true} height={10} width={2} radius={2} />
+          </div>
+        </List.Item>
+      )}
       <div style={inputContainerStyle}>
         <TextArea
           rows={1}
@@ -260,36 +260,35 @@ const Chatbox: React.FC = () => {
           value={inputValue}
           onChange={handleInputChange}
           onKeyPress={handleInputKeyPress}
-          style={{ resize: 'none', flex: 1 }}
+          style={{ resize: 'none' }}
         />
         <Button type="primary" onClick={handleMessageSubmit}>
           Send
         </Button>
       </div>
-      <Row justify="space-between" style={{ marginTop: '10px' }}>
-        <Col>
-          <Button type="link" onClick={handleClearDiscussion} style={clearButtonStyle}>
-            Clear Discussion
-          </Button>
-          <Button type="link" onClick={handleDarkModeToggle} style={modeButtonStyle}>
-            {isDarkMode ? 'Light Mode' : 'Dark Mode'}
-          </Button>
-        </Col>
-        <Col>
-          <Button type="link" onClick={handleDownloadDiscussion} style={downloadButtonStyle} icon={<DownloadOutlined />}>
-            Download Discussion
-          </Button>
-          <input type="file" accept=".json" onChange={handleUploadDiscussion} style={{ display: 'none' }} />
-          <Button
-            type="link"
-            onClick={() => (document.querySelector('input[type=file]') as HTMLInputElement)?.click()}
-            style={uploadButtonStyle}
-            icon={<UploadOutlined />}
-          >
-            Upload Discussion
-          </Button>
-        </Col>
-      </Row>
+      <Button type="link" onClick={handleClearDiscussion} style={clearButtonStyle}>
+        Clear Discussion
+      </Button>
+      <Button type="link" onClick={handleDarkModeToggle} style={modeButtonStyle}>
+        {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+      </Button>
+      <Button
+        type="link"
+        onClick={handleDownloadDiscussion}
+        style={downloadButtonStyle}
+        icon={<DownloadOutlined />}
+      >
+        Download Discussion
+      </Button>
+      <input type="file" accept=".json" onChange={handleUploadDiscussion} style={{ display: 'none' }} />
+      <Button
+        type="link"
+        onClick={() => (document.querySelector('input[type=file]') as HTMLInputElement)?.click()}
+        style={uploadButtonStyle}
+        icon={<UploadOutlined />}
+      >
+        Upload Discussion
+      </Button>
     </div>
   );
 };
