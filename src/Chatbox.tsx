@@ -219,6 +219,12 @@ const Chatbox: React.FC = () => {
     color: isDarkMode ? 'white' : 'black',
   };
 
+  if (isDarkMode) {
+    document.body.style.backgroundColor = '#1f2933';
+  } else {
+    document.body.style.backgroundColor = '#c6cacf';
+  }
+
   return (
     <div style={containerStyle}>
       <List
