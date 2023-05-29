@@ -166,7 +166,7 @@ const Chatbox: React.FC = () => {
   };
 
   const chatBubbleStyle: React.CSSProperties = {
-    backgroundColor: isDarkMode ? '#4299e1' : '#a0c3ff',
+    backgroundColor: isDarkMode ? '#3a82bd' : '#7aabff',
     color: isDarkMode ? 'white' : 'black',
     padding: '10px',
     borderRadius: '5px',
@@ -236,7 +236,7 @@ const Chatbox: React.FC = () => {
             onMouseEnter={() => setMessageIdToRemove(message.id)}
             onMouseLeave={() => setMessageIdToRemove(null)}
           >
-            <div style={message.role === 'user' ? { ...chatBubbleStyle, backgroundColor: isDarkMode ? '#667EEA' : '#93C5FD' } : chatBubbleStyle}>
+            <div style={message.role === 'user' ? { ...chatBubbleStyle, backgroundColor: isDarkMode ? '#4f61b3' : '#add3ff' } : chatBubbleStyle}>
               <Text strong>{message.role === 'user' ? 'User: ' : 'Bot: '}</Text>
               <div style={timestampStyle}>
                 {renderMessageTimestamp(message.timestamp)}
