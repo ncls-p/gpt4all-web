@@ -4,7 +4,7 @@ services:
   gpt4-all-web:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     ports:
       - "8028:3000"
     restart: unless-stopped
