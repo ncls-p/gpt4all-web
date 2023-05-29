@@ -55,5 +55,5 @@ jobs:
                   script: |
                       cd /home/blury/perso/ia/gpt4all-web
                       touch .env
-                      docker compose down
+                      docker compose down --remove-orphans
                       docker compose up -d
