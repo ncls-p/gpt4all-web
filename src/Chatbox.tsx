@@ -4,6 +4,8 @@ import { DeleteOutlined, DownloadOutlined, UploadOutlined } from '@ant-design/ic
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import { ScaleLoader } from 'react-spinners';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'; // Import the desired code theme
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -98,11 +100,36 @@ const Chatbox: React.FC = () => {
 
   const renderMessageContent = (content: string | object) => {
     if (typeof content === 'string') {
-      return <ReactMarkdown>{content}</ReactMarkdown>;
+      if (content.startsWith('```') && content.endsWith('```')) {
+        const code = content.slice(3, -3);
+        return (
+          <SyntaxHighlighter language="jsx" style={vscDarkPlus}>
+            {code}
+          </SyntaxHighlighter>
+        );
+      } else if (content.includes('```')) {
+        const parts = content.split('```');
+        return parts.map((part, index) => {
+          if (index % 2 === 1) {
+            return (
+              <SyntaxHighlighter language="jsx" style={vscDarkPlus} key={index}>
+                {part}
+              </SyntaxHighlighter>
+            );
+          } else {
+            return (
+              <ReactMarkdown key={index}>{part}</ReactMarkdown>
+            );
+          }
+        });
+      } else {
+        return <ReactMarkdown>{content}</ReactMarkdown>;
+      }
     } else {
       return JSON.stringify(content);
     }
   };
+
 
   const renderMessageTimestamp = (timestamp: number) => {
     const messageDate = new Date(timestamp);
